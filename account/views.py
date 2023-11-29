@@ -12,8 +12,10 @@ from account.serializers import (
   UserRegistrationSerializer,
   UserLoginSerializer
 )
+from account.renderers import UserRenderer
 
 class UserRegistrationView(APIView):
+  renderer_classes = (UserRenderer,)
   def post(self, request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
@@ -22,6 +24,7 @@ class UserRegistrationView(APIView):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserLoginView(APIView):
+  renderer_classes = (UserRenderer,)
   def post(self, request):
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
