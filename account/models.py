@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
 #Local Imports
-from .managers import UserManager
+from account.managers import UserManager
 
 class User(AbstractBaseUser):
   email = models.EmailField(
