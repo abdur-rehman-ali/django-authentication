@@ -1,5 +1,6 @@
 #Django Imports
 from django.shortcuts import render
+from django.contrib.auth import authenticate
 
 #Rest Framework Imports
 from rest_framework.response import Response
@@ -7,7 +8,10 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 #Local Imports
-from account.serializers import UserRegistrationSerializer
+from account.serializers import (
+  UserRegistrationSerializer,
+  UserLoginSerializer
+)
 
 class UserRegistrationView(APIView):
   def post(self, request):
@@ -17,3 +21,20 @@ class UserRegistrationView(APIView):
       return Response({'success': True}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class UserLoginView(APIView):
+  def post(self, request):
+    serializer = UserLoginSerializer(data=request.data)
+    if serializer.is_valid():
+      email = serializer.data.get('email')
+      password = serializer.data.get('password')
+      user = authenticate(request, email=email, password=password)
+      if user is not None:
+        return Response({'success': True}, status=status.HTTP_200_OK)
+      else:
+        response = {
+          'errors': {
+            'non_field_errors': 'Username or password is invalid'
+          }
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
