@@ -6,12 +6,17 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+#Rest Framework Simple JWT Imports
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 #Local Imports
 from account.serializers import (
   UserRegistrationSerializer,
-  UserLoginSerializer
+  UserLoginSerializer,
+  UserProfileSerializer
 )
 from account.renderers import UserRenderer
 
@@ -51,3 +56,12 @@ class UserLoginView(APIView):
         }
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfileView(APIView):
+  authentication_classes = [JWTAuthentication]
+  permission_classes = [IsAuthenticated]
+
+  def get(self, request):
+    user = request.user
+    serializer = UserProfileSerializer(user)
+    return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
