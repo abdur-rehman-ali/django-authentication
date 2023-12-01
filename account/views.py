@@ -11,12 +11,14 @@ from rest_framework.permissions import IsAuthenticated
 #Rest Framework Simple JWT Imports
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
+import pdb
 
 #Local Imports
 from account.serializers import (
   UserRegistrationSerializer,
   UserLoginSerializer,
-  UserProfileSerializer
+  UserProfileSerializer,
+  UserChangePasswordSerializer
 )
 from account.renderers import UserRenderer
 
@@ -58,6 +60,7 @@ class UserLoginView(APIView):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileView(APIView):
+  renderer_classes = (UserRenderer,)
   authentication_classes = [JWTAuthentication]
   permission_classes = [IsAuthenticated]
 
@@ -65,3 +68,18 @@ class UserProfileView(APIView):
     user = request.user
     serializer = UserProfileSerializer(user)
     return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+
+class UserChangePasswordView(APIView):
+  renderer_classes = (UserRenderer,)
+  authentication_classes = [JWTAuthentication]
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    serializer = UserChangePasswordSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+      new_password = serializer.data.get('new_password')
+      user = request.user
+      user.set_password(new_password)
+      user.save()
+      return Response({'success': True}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
