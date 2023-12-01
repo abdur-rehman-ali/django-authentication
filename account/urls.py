@@ -6,7 +6,9 @@ from account.views import (
   UserRegistrationView,
   UserLoginView,
   UserProfileView,
-  UserChangePasswordView
+  UserChangePasswordView,
+  UserSendPasswordResetView,
+  UserPasswordResetView
 )
 
 urlpatterns = [
@@ -14,4 +16,6 @@ urlpatterns = [
   path('login', UserLoginView.as_view()),
   path('profile', UserProfileView.as_view()),
   path('change-password', UserChangePasswordView.as_view()),
+  path('send-reset-password', UserSendPasswordResetView.as_view()),
+  path('reset-password/<uuid>/<token>', UserPasswordResetView.as_view()),
 ]
