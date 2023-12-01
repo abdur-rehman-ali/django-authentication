@@ -77,9 +77,10 @@ class UserChangePasswordView(APIView):
   def post(self, request):
     serializer = UserChangePasswordSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
-      new_password = serializer.data.get('new_password')
-      user = request.user
-      user.set_password(new_password)
-      user.save()
+      self.update_user_password(request.user, serializer.data.get('new_password'))
       return Response({'success': True}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def update_user_password(self, user, password):
+    user.set_password(password)
+    user.save()
