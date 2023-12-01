@@ -11,7 +11,6 @@ from rest_framework.permissions import IsAuthenticated
 #Rest Framework Simple JWT Imports
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
-import pdb
 
 #Local Imports
 from account.serializers import (
