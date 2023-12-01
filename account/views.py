@@ -16,7 +16,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from account.serializers import (
   UserRegistrationSerializer,
   UserLoginSerializer,
-  UserProfileSerializer
+  UserProfileSerializer,
+  UserChangePasswordSerializer
 )
 from account.renderers import UserRenderer
 
@@ -58,6 +59,7 @@ class UserLoginView(APIView):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileView(APIView):
+  renderer_classes = (UserRenderer,)
   authentication_classes = [JWTAuthentication]
   permission_classes = [IsAuthenticated]
 
@@ -65,3 +67,19 @@ class UserProfileView(APIView):
     user = request.user
     serializer = UserProfileSerializer(user)
     return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+
+class UserChangePasswordView(APIView):
+  renderer_classes = (UserRenderer,)
+  authentication_classes = [JWTAuthentication]
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    serializer = UserChangePasswordSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+      self.update_user_password(request.user, serializer.data.get('new_password'))
+      return Response({'success': True}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def update_user_password(self, user, password):
+    user.set_password(password)
+    user.save()
