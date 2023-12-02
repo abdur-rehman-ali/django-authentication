@@ -17,7 +17,9 @@ from account.serializers import (
   UserRegistrationSerializer,
   UserLoginSerializer,
   UserProfileSerializer,
-  UserChangePasswordSerializer
+  UserChangePasswordSerializer,
+  UserSendPasswordResetSerializer,
+  UserPasswordResetSerializer
 )
 from account.renderers import UserRenderer
 
@@ -83,3 +85,22 @@ class UserChangePasswordView(APIView):
   def update_user_password(self, user, password):
     user.set_password(password)
     user.save()
+
+
+class UserSendPasswordResetView(APIView):
+  renderer_classes = (UserRenderer,)
+
+  def post(self, request):
+    serializer = UserSendPasswordResetSerializer(data=request.data) 
+    if serializer.is_valid():
+      return Response({"success": True}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserPasswordResetView(APIView):
+  renderer_classes = (UserRenderer,)
+
+  def post(self, request, uuid, token):
+    serializer = UserPasswordResetSerializer(data=request.data, context={'uuid': uuid, 'token': token}) 
+    if serializer.is_valid():
+      return Response({"success": True}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
