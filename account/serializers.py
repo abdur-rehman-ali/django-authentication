@@ -78,20 +78,35 @@ class UserSendPasswordResetSerializer(serializers.Serializer):
 
 
 class UserPasswordResetSerializer(serializers.Serializer):
-  new_password = serializers.CharField(max_length=255)
-  new_password_confirmation = serializers.CharField(max_length=255)
+  password = serializers.CharField(max_length=255)
+  password_confirmation = serializers.CharField(max_length=255)
 
   def validate(self, attrs):
-    new_password = attrs.get('new_password')
-    new_password_confirmation = attrs.get('new_password_confirmation')
-    if new_password!= new_password_confirmation:
+    self.validate_password_match(attrs)
+    user = self.get_user_from_token()
+    self.reset_user_password(user, attrs.get('password'))
+    return attrs
+
+  def validate_password_match(self, attrs):
+    password = attrs.get('password')
+    password_confirmation = attrs.get('password_confirmation')
+    if password!= password_confirmation:
       raise serializers.ValidationError("Password and confirmation password doesn't match")
+
+  def get_user_from_token(self):
     uuid = self.context.get('uuid')
     token = self.context.get('token')
     id = smart_str(urlsafe_base64_decode(uuid))
-    user = User.objects.get(id=id)
+    try:
+      user = User.objects.get(id=id)
+    except User.DoesNotExist:
+      raise serializers.ValidationError("User doesn't exist")
+
     if not PasswordResetTokenGenerator().check_token(user, token):
       raise serializers.ValidationError("Token is not valid")
-    user.set_password(new_password)
+    return user
+
+  def reset_user_password(self, user, password):
+    user.set_password(password)
     user.save()
-    return attrs
+    
