@@ -5,6 +5,7 @@ from rest_framework import serializers
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, smart_str
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from decouple import config
 
 #Local Imports
 from account.models import User
@@ -70,11 +71,13 @@ class UserSendPasswordResetSerializer(serializers.Serializer):
       raise serializers.ValidationError("User with this email doesn't exist")
     uuid = urlsafe_base64_encode(force_bytes(user.id))
     token = PasswordResetTokenGenerator().make_token(user)
-    BASE_URL = "http://localhost:8000"
-    link = f"{BASE_URL}/api/v1/reset-password/{uuid}/{token}"
+    link = self.generate_link(uuid, token)
     print(link)
     # Email send code
     return attrs
+  
+  def generate_link(self, uuid, token):
+    return f"{config('BASE_URL')}/api/v1/reset-password/{uuid}/{token}"
 
 
 class UserPasswordResetSerializer(serializers.Serializer):
