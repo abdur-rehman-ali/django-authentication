@@ -1,5 +1,7 @@
 asgiref==3.7.2
+certifi==2023.11.17
 Django==4.2.7
+django-mail-viewer==2.1.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.0
 PyJWT==2.8.0
