@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'account',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_mail_viewer'
+    'django_mail_viewer',
+    'schema_viewer'
 ]
 
 MIDDLEWARE = [
@@ -123,6 +124,7 @@ AUTH_USER_MODEL = 'account.User'
 #Mailer Settings
 os.environ['SSL_CERT_FILE'] = certifi.where()
 EMAIL_BACKEND = 'django_mail_viewer.backends.locmem.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -130,4 +132,7 @@ EMAIL_HOST_USER = config('EMAIL_ADDRESS')
 EMAIL_HOST_PASSWORD = config('PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config('EMAIL_ADDRESS')
+
+#Celery settings
+CELERY_BROKER_URL ='redis://localhost:6379/0'
 

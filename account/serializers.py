@@ -72,7 +72,7 @@ class UserSendPasswordResetSerializer(serializers.Serializer):
     uuid = urlsafe_base64_encode(force_bytes(user.id))
     token = PasswordResetTokenGenerator().make_token(user)
     link = self.generate_link(uuid, token)
-    send_password_reset_email(user, link)
+    send_password_reset_email.delay(user.email, link)
     return attrs
   
   def generate_link(self, uuid, token):
