@@ -6,6 +6,9 @@ from decouple import config
 #Local Imports
 from account.models import User
 
+#Celery Imports
+from celery import shared_task
+
 def get_user_by_email(email):
   users = User.objects.filter(email=email)
   if users.exists():
@@ -13,13 +16,14 @@ def get_user_by_email(email):
   return None
 
 
-def send_password_reset_email(user, link):
+@shared_task
+def send_password_reset_email(user_email, link):
   subject = 'Subject of the email'
-  recipient_list = [user]
+  recipient_list = [user_email]
   template = 'account/password_reset_email.html'
   context = {
     'link': link, 
-    'user': user
+    'email': user_email
   }
   message = render_to_string(template, context)
   email = EmailMessage(
