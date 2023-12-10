@@ -9,7 +9,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 #Rest Framework Simple JWT Imports
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 #Local Imports
@@ -22,13 +21,7 @@ from account.serializers import (
   UserPasswordResetSerializer
 )
 from account.renderers import UserRenderer
-
-def get_tokens_for_user(user):
-  refresh = RefreshToken.for_user(user)
-  return {
-    'refresh': str(refresh),
-    'access': str(refresh.access_token),
-  }
+from account.utils import get_tokens_for_user
 
 class UserRegistrationView(APIView):
   renderer_classes = (UserRenderer,)
