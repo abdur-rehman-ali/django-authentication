@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'account',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_mail_viewer',
     'schema_viewer'
 ]
 
@@ -123,7 +122,6 @@ AUTH_USER_MODEL = 'account.User'
 
 #Mailer Settings
 os.environ['SSL_CERT_FILE'] = certifi.where()
-EMAIL_BACKEND = 'django_mail_viewer.backends.locmem.EmailBackend'
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
