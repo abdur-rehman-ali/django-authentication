@@ -1,0 +1,21 @@
+{
+	"id": "64f11923-55e3-43d6-b710-310f68614bf6",
+	"name": "Master",
+	"values": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "TOKEN",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2023-12-10T16:06:58.670Z",
+	"_postman_exported_using": "Postman/10.20.10"
+}
